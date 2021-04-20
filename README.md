@@ -3,7 +3,10 @@ This repository is for the group 1 of BSCS-3A for their thesis and accomplishmen
 
 #Group Members: 
 Bryan Abesamis
+
 Timothy Diosaban
+
 Alyssa Magallanes
+
 Neil Ryan Sustiguer
 

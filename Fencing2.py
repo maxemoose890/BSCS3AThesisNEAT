@@ -37,9 +37,9 @@ pygame.display.set_caption("Fencing AI")
 bg_img = pygame.transform.scale(pygame.image.load(os.path.join("imgs","bg.png")).convert_alpha(), (600, 900))
 
 #fencer_images = [(pygame.image.load(os.path.join("imgs","fencer" + str(x) + ".png"))) for x in range(1,4)]
-fencer_image = (pygame.image.load(os.path.join("imgs","fencer1.png")))
-high_pose_image = (pygame.image.load(os.path.join("imgs","fencer2.png")))
-low_pose_image = (pygame.image.load(os.path.join("imgs","fencer3.png")))
+fencer_image = (pygame.image.load(os.path.join("imgs","fencer1P.png")))
+high_pose_image = (pygame.image.load(os.path.join("imgs","fencer2P.png")))
+low_pose_image = (pygame.image.load(os.path.join("imgs","fencer3P.png")))
 
 base_img = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs","base.png")).convert_alpha())
 
@@ -57,8 +57,10 @@ class Fencer(pygame.sprite.Sprite):
         self.images.append(fencer_image)
         self.images.append(high_pose_image)
         self.images.append(low_pose_image)
-        self.image = self.images[0]
+        self.image = self.images[0].convert_alpha()
         self.rect = self.image.get_rect()
+        #self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_threshold(self.image, (145, 18, 249), (145, 18, 249))
         
         #170,730
         self.pos = vec((x, y))
@@ -103,17 +105,16 @@ class Fencer(pygame.sprite.Sprite):
            self.vel.y = -7
 
     def mid_pose(self):
-        self.image = self.images[0]
-
+        self.image = self.images[0].convert_alpha()
+        self.mask = pygame.mask.from_threshold(self.image, (145, 18, 249), (145, 18, 249))
         
     def high_pose(self):
-        self.image = self.images[1]
-
-    
+        self.image = self.images[1].convert_alpha()
+        self.mask = pygame.mask.from_threshold(self.image, (145, 18, 249), (145, 18, 249))
     def low_pose(self):
-        self.image = self.images[2]
-
-
+        self.image = self.images[2].convert_alpha()
+        self.mask = pygame.mask.from_threshold(self.image, (145, 18, 249), (145, 18, 249))
+        
 WIDTH = base_img.get_width()          
 class Floor(pygame.sprite.Sprite):
     
@@ -132,18 +133,25 @@ class Floor(pygame.sprite.Sprite):
 class Box(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__() 
-        self.image = pygame.Surface((30, 30))
+        self.image = pygame.Surface((50, 40)).convert_alpha()
         self.image.fill((128,255,40))
-        self.rect = self.image.get_rect(center = (420, 390))
-
+        self.rect = self.image.get_rect(center = (420, 460))
+        self.mask = pygame.mask.from_surface(self.image)
+        #self.mask = pygame.mask.from_threshold(self.image, (128,255,40), (128,255,40))
+        
         
     def update(self):
-        hits = pygame.sprite.collide_mask(Box1, Fencer1)
+        #hits = pygame.sprite.collide_mask(Box1, Fencer1)
+        offset = (int(Fencer1.pos.x), int(Fencer1.pos.y))
+        hits = Box1.mask.overlap(Fencer1.mask, (offset))
+        print(offset, hits)
+        
         if hits:
             self.image.fill((255,0,0))
             print("Hit")
         else:
             self.image.fill((128,255,40))
+            
 
 """
 class Sabre(pygame.sprite.Sprite):
